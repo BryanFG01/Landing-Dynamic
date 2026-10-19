@@ -1,116 +1,184 @@
-# El Agropecuario · Landing
+# Landing Dynamic · Plataforma de Negocio con Landing Dinámica y Admin No-Code
 
-<img src="public/og-image.jpg" alt="Canasta de mimbre con huevos colorados recién recogidos sobre un paño">
+Plataforma integral para negocios que combina una **Landing Page de alto impacto y conversión** con un **Panel de Administración dinámico, modular y sin código**. 
 
-Landing de **El Agropecuario**, distribuidora de huevos y pollos: pollo campesino de piel amarilla natural y huevos colorados, a domicilio. Los pedidos se hacen por WhatsApp.
+Permite a cualquier empresa u organización gestionar su presencia digital, catálogo de productos/servicios, embudo de pedidos directos a WhatsApp, y operaciones internas completas desde una única solución escalable.
 
-La portada es un **paseo por la finca que avanza y retrocede con el scroll**: seis tramos de vídeo, de la granja y los huevos recién recogidos hasta los pollitos al aire libre. Debajo están los productos, los combos, las preguntas frecuentes, el pedido semanal y la llamada final para pedir.
+---
 
-**Stack:** [Astro 7](https://astro.build) · [Tailwind CSS 4](https://tailwindcss.com) · [GSAP ScrollTrigger](https://gsap.com/docs/v3/Plugins/ScrollTrigger/) · [Lenis](https://lenis.darkroom.engineering) · sharp
+## 🚀 Propuesta de Valor para el Negocio
 
-## Puesta en marcha
+### 1. Landing Page Dinámica de Alta Conversión
+- **Experiencia visual inmersiva**: Portada cinematográfica con paseo en video sincronizado con el scroll (*video scrub* con GSAP y Lenis), animaciones fluidas y optimización para móviles.
+- **Identidad visual 100 % configurable**: 4 plantillas completas de diseño preconstruidas (*Finca*, *Órbita*, *Atardecer* y *Lima*), 4 estilos de portada (dividida, panel, centrada y tarjeta), control total de paletas de colores (con validación de contraste WCAG), tipografías y bordes.
+- **Catálogo comercial en tiempo real**: Productos, precios, combos y disponibilidad ("Agotado" / "Disponible") sincronizados directamente con la base de datos.
+- **Asistente de ventas y pedidos por WhatsApp**:
+  - Chatbot guiado paso a paso para selección de productos, cantidades, datos de contacto y entrega (sin costos de IA).
+  - Enlace directo a WhatsApp con el pedido y total prellenado.
+  - Registro automático del pedido en el panel administrativo.
+- **SEO técnico y cumplimiento legal**: Datos estructurados JSON-LD (`LocalBusiness`, catálogo de ofertas, FAQs), Open Graph, sitemap automático, robots.txt y página de política de tratamiento de datos personales conforme a la Ley 1581.
 
-Necesitas Node.js 22.12 o superior y pnpm.
+### 2. Panel de Administración Dinámico (`/admin`)
+- **Constructor de Módulos No-Code**: Crea y gestiona nuevos módulos operativos al vuelo sin tocar código ni desplegar:
+  - **Módulos de Registros**: Formularios dinámicos con más de 14 tipos de campos (fotos, archivos adjuntos, selectores, fechas, relaciones).
+  - **Tablas SQL Nativas**: Creación y modificación automática de tablas en PostgreSQL con claves foráneas, enums y filtros.
+  - **Consultas SQL / Reportes**: Vistas analíticas y de solo lectura para métricas y totales.
+  - CRUD completo, filtros avanzados, ordenación, paginación e **importación/exportación masiva en Excel (.xlsx) y CSV**.
+- **Gestor Visual del Sitio Web (CMS en vivo)**:
+  - Edición bloque a bloque de textos, fotos, videos, orden y visibilidad.
+  - Sistema de borrador, vista previa instantánea y publicación con un clic (regeneración automática vía Deploy Hook).
+- **Control de Pedidos y Notificaciones en Vivo**:
+  - Alerta sonora y visual en tiempo real de nuevos pedidos en el panel.
+  - Notificaciones automáticas a Telegram (opcional).
+  - Gestión rápida de estados y contacto directo a WhatsApp del cliente.
+- **Métricas y Analítica de Negocio**:
+  - Dashboard con métricas de ventas estimadas, pedidos de la semana, visitas y tasa de conversión (sin cookies ni rastreadores invasivos).
+- **Seguridad y Control de Acceso**:
+  - Autenticación segura con contraseñas encriptadas con PBKDF2-SHA256 y sesiones HttpOnly.
+  - Roles de usuario (Administrador total o Usuario con permisos granulares por módulo de lectura o edición).
+  - Registro de auditoría completo (`admin.audit_log`) y consola SQL protegida.
 
+---
+
+## 🛠️ Stack Tecnológico
+
+| Capa | Tecnologías |
+| :--- | :--- |
+| **Frontend Landing** | [Astro 7](https://astro.build) (prerenderizado / SSR híbrido) · [Tailwind CSS 4](https://tailwindcss.com) · [GSAP](https://gsap.com) · [Lenis](https://lenis.darkroom.engineering) · [Sharp](https://sharp.pixelplumbing.com) |
+| **Admin Panel (SPA)** | [React 19](https://react.dev) (isla interactiva SSR sin recarga) · [Radix UI](https://www.radix-ui.com) · [nuvo-ui](https://nuvo-ui.xyz) · [TanStack Table](https://tanstack.com/table) |
+| **Base de Datos** | [Neon PostgreSQL](https://neon.tech) Serverless con Connection Pooling (`pg`) |
+| **Infraestructura** | [Vercel](https://vercel.com) (Serverless Functions + Edge CDN) · Deploy Hooks |
+
+---
+
+## 📦 Puesta en Marcha
+
+### Requisitos previos
+- **Node.js** 22.12 o superior.
+- **pnpm** instalado globalmente.
+- Instancia de **PostgreSQL** (se recomienda [Neon](https://neon.tech)).
+
+### 1. Instalación de dependencias
 ```sh
 pnpm install
+```
+
+### 2. Variables de entorno
+Crea un archivo `.env` en la raíz del proyecto tomando como referencia las siguientes variables:
+```ini
+# Base de datos Neon (Pooler para funciones serverless, Unpooled para migraciones)
+DATABASE_URL="postgresql://usuario:pass@ep-pooler.region.neon.tech/neondb?sslmode=require"
+DATABASE_URL_UNPOOLED="postgresql://usuario:pass@ep-direct.region.neon.tech/neondb?sslmode=require"
+
+# URL pública del sitio (para canónica, sitemap y JSON-LD)
+SITE_URL="https://tu-dominio.com"
+
+# Deploy Hook de Vercel (opcional: redespliega la landing al publicar cambios desde el panel)
+VERCEL_DEPLOY_HOOK=""
+
+# Notificaciones opcionales a Telegram
+TELEGRAM_BOT_TOKEN=""
+TELEGRAM_CHAT_ID=""
+```
+
+### 3. Migraciones y usuario administrador inicial
+Ejecuta las migraciones en la base de datos y genera el primer usuario de acceso al panel:
+```sh
+# Ejecutar migraciones
+pnpm db:migrate
+
+# Ver estado de migraciones
+pnpm db:status
+
+# Crear usuario administrador
+pnpm admin:create
+```
+
+### 4. Servidor de desarrollo
+```sh
 pnpm dev
 ```
+- **Landing pública:** `http://localhost:4321`
+- **Panel de administración:** `http://localhost:4321/admin`
 
-La web queda en `http://localhost:4321`.
+---
 
-| Comando | Qué hace |
-| :-- | :-- |
-| `pnpm dev` | Servidor de desarrollo con las marcas de contenido pendiente visibles |
-| `pnpm build` | Genera la web estática en `dist/` |
-| `pnpm preview` | Sirve el build en local para revisarlo antes de publicar |
+## 📋 Comandos Disponibles
 
-## Cómo funciona el paseo
+| Comando | Descripción |
+| :--- | :--- |
+| `pnpm dev` | Inicia el entorno de desarrollo local con recarga en vivo |
+| `pnpm build` | Compila la landing estática y las funciones serverless de la API y el panel |
+| `pnpm preview` | Previsualiza el build de producción en local |
+| `pnpm db:migrate` | Aplica las migraciones pendientes en PostgreSQL |
+| `pnpm db:status` | Consulta el historial y estado de migraciones |
+| `pnpm db:seed` | Carga datos iniciales de prueba (opcional) |
+| `pnpm admin:create` | Script interactivo para crear o restablecer usuarios administradores |
+| `pnpm audit:components` | Auditoría de componentes y consistencia arquitectónica |
 
-- **Seis paradas, seis tramos.** Cada parada de `paseo.paradas` (en `src/features/landing/domain/finca.ts`) tiene su clip, que va de ella a la siguiente: la granja, el nacimiento, los pollitos, la crianza, la recogida y al aire libre. Los seis clips salen de un solo vídeo de 8 s partido en tramos iguales, así que cada uno termina donde empieza el siguiente.
-- **El scroll manda.** `world.ts` traduce la posición del scroll a un valor continuo y fija el `currentTime` del clip activo. El vídeo solo avanza cuando haces scroll.
-- **Los pósters tapan la carga.** Bajo cada vídeo está su primer fotograma. Mientras el clip no ha cargado se ve el póster, y el cambio no se nota.
-- **Carga por cercanía.** Los clips se descargan de uno en uno, empezando por el tramo actual y siguiendo por el más cercano.
-- **Móvil.** El 16:9 se recorta en vertical y el campo `focus` de cada parada decide qué parte queda a la vista.
-- **Sin vídeo cuando no toca.** Con `prefers-reduced-motion` o con ahorro de datos activo solo se ven los pósters.
+---
 
-## Estructura
+## 📂 Arquitectura del Proyecto
+
+El código sigue **Clean Architecture modular por *features***, separando estrictamente la presentación del dominio y los servicios de base de datos:
 
 ```text
-src/
-├── data/
-│   ├── finca.ts          Todo el contenido: marca, paradas, productos, combos, FAQ, contacto y SEO
-│   ├── schema.ts         JSON-LD: LocalBusiness con catálogo, WebSite, WebPage y FAQPage
-│   └── imagenes.ts       Imagen para redes y fotos con URL fija (JSON-LD y sitemap)
-├── pages/
-│   ├── index.astro       Landing
-│   ├── robots.txt.ts
-│   ├── llms.txt.ts
-│   └── 404.astro
-├── layouts/Layout.astro  <head>: metas, Open Graph, Twitter Card y fuentes
-├── components/
-│   ├── ScrollWorld.astro Paseo por la finca: pósters, clips y textos de cada parada
-│   ├── Dishes.astro      Productos (#productos)
-│   ├── Experiences.astro Combos (#combos)
-│   ├── Faq.astro         Preguntas frecuentes (#preguntas)
-│   ├── Gift.astro        Pedido fijo cada semana (#semanal)
-│   ├── FinalCta.astro    Llamada final a pedir (#pedir)
-│   ├── Pending.astro     Marca de contenido pendiente (solo en desarrollo)
-│   └── …                 Cabecera, pie, logo, iconos y adornos
-├── scripts/
-│   ├── motion.ts         Lenis, apariciones al hacer scroll y animaciones con GSAP
-│   └── world.ts          Lógica del paseo: scrub, pósters y cola de carga
-├── styles/global.css     Tokens de Tailwind y utilidades
-└── assets/               Fotos, pósters del paseo y fuentes
-public/
-├── video/finca-1…6.mp4   Clips del paseo, codificados para scrub
-├── photos/               Fotos en JPG con URL fija (JSON-LD y sitemap)
-├── og-image.jpg          Imagen para redes (1200×630)
-└── site.webmanifest      Manifest e iconos
+├── db/
+│   └── migrations/               # Migraciones SQL estructuradas (0001…0007)
+├── public/                       # Archivos estáticos, videos optimizados, manifest
+├── scripts/                      # Utilidades de base de datos y administración
+├── src/
+│   ├── features/
+│   │   ├── admin/                # Panel de administración dinámico (SPA React)
+│   │   │   ├── appearance/       # Personalización de marca y tema del admin
+│   │   │   ├── auth/             # Login, rate-limiting, sesiones y CSRF
+│   │   │   ├── core/             # Enrutador cliente SPA, contratos de esquemas y API
+│   │   │   ├── dashboard/        # Métricas de negocio y gráficos de pedidos
+│   │   │   ├── module-editor/    # Constructor No-Code de módulos y tablas SQL
+│   │   │   ├── orders/           # Gestión de pedidos en tiempo real
+│   │   │   ├── records/          # CRUD genérico, importador/exportador Excel (.xlsx)
+│   │   │   ├── shell/            # Layout del panel, barra lateral y notificaciones
+│   │   │   ├── site-editor/      # CMS visual: editor de bloques, temas y plantillas
+│   │   │   ├── sql/              # Consola de consultas SQL seguras
+│   │   │   └── users/            # Gestión de usuarios, roles y permisos
+│   │   └── landing/              # Landing page pública y optimizada
+│   │       ├── components/       # Componentes de bloques (Hero, Catálogo, FAQs, etc.)
+│   │       ├── domain/           # Tipos de contenido, temas, plantillas y esquemas SEO
+│   │       ├── scripts/          # Lógica interactiva cliente (video scrub, animaciones)
+│   │       └── server/           # Carga de contenido activo desde base de datos
+│   ├── layouts/                  # Layouts base de Astro (metas, fuentes, estilos)
+│   ├── pages/
+│   │   ├── admin/[...path].astro # Contenedor SSR que monta la SPA del panel
+│   │   ├── api/admin/            # Endpoints REST protegidos para el admin
+│   │   ├── index.astro           # Entrada principal de la landing dinámica
+│   │   └── privacidad.astro      # Política de privacidad y tratamiento de datos
+│   ├── shared/                   # Componentes de UI comunes, clientes DB y utilidades
+│   └── styles/                   # Tokens globales de diseño y utilidades CSS
 ```
 
-## Editar el contenido
+---
 
-Casi todo el texto vive en `src/features/landing/domain/finca.ts`. El copy de las paradas del paseo está en `ScrollWorld.astro`.
+## 🎬 Flujo de Trabajo para Nuevos Negocios
 
-- **Nombre de la marca:** se cambia en `marca` y se actualiza en toda la web (logo, títulos, SEO y JSON-LD).
-- **WhatsApp:** el número va en `whatsapp`, con indicativo y sin espacios (`57…`). De él salen los enlaces de pedido y el teléfono.
-- **Precios:** mientras un precio sea `'$ —'`, el JSON-LD publica la oferta sin precio.
-- **Pendientes:** lo que no está confirmado se marca con `<Pending>` o con el campo `pending`. Solo se ve con `pnpm dev` y nunca llega al build.
+1. **Configurar el Negocio**:
+   - Accede a `/admin` con tu usuario administrador.
+   - Ve a **Sitio web → Plantillas** y selecciona la que mejor se adapte al rubro (*Finca*, *Órbita*, *Atardecer* o *Lima*).
+   - Ajusta colores corporativos, tipografía y disposición del menú.
+2. **Definir el Catálogo y Datos**:
+   - En **Sitio web → Bloques**, personaliza los textos, imágenes, videos y preguntas frecuentes.
+   - Si tu negocio requiere tablas a medida (clientes, reservas, proveedores, inventario), créalas al instante en **Constructor de módulos**.
+3. **Publicar Cambios**:
+   - Revisa la vista previa en el panel.
+   - Presiona **Publicar**: el sitio actualiza la landing en vivo o dispara el *Deploy Hook* para regenerar la versión estática de alto rendimiento.
+4. **Recibir y Gestionar Pedidos**:
+   - Los clientes exploran la web, usan el chat interactivo o el catálogo y envían sus pedidos a WhatsApp.
+   - El equipo de ventas recibe el aviso sonoro en el panel o en Telegram para gestionar la entrega y cambiar el estado del pedido.
 
-## Cambiar un clip del paseo
+---
 
-Cada clip necesita un keyframe cada pocos fotogramas (`-g 6`) para que el scrub sea fluido, y el color marcado como BT.709 con curva sRGB para que coincida con el póster:
+## 📚 Documentación Adicional
 
-```sh
-ffmpeg -i clip.mp4 -an -vf "scale=1920:-2" -c:v libx264 -preset slow -crf 28 \
-  -g 6 -keyint_min 6 -sc_threshold 0 -pix_fmt yuv420p \
-  -color_primaries bt709 -color_trc iec61966-2-1 -colorspace bt709 -color_range tv \
-  -movflags +faststart+write_colr public/video/finca-1.mp4
-```
-
-Después regenera su póster con el primer fotograma, conviértelo a WebP y guárdalo en `src/assets/paseo/`:
-
-```sh
-ffmpeg -i public/video/finca-1.mp4 -frames:v 1 \
-  -vf "scale=in_color_matrix=bt709:in_range=tv:out_range=pc,format=rgb24" finca-1.png
-```
-
-## SEO
-
-- **Metas:** título y descripción en `seo` (`src/features/landing/domain/finca.ts`), Open Graph y Twitter Card con `og-image.jpg`. La 404 lleva `noindex`.
-- **Datos estructurados:** `src/features/landing/domain/schema.ts` genera `LocalBusiness` (ubicación, contacto, catálogo de productos y combos, y pedido por WhatsApp), `WebSite`, `WebPage` y `FAQPage`.
-- **Rastreo:** `@astrojs/sitemap` genera el sitemap con las fotos de la finca, y `robots.txt` lo enlaza.
-
-## Pendiente
-
-- Nombre definitivo de la marca.
-- Número de WhatsApp, Instagram, ubicación, zona y días de entrega, y horario.
-- Catálogo, combos y precios.
-- Confirmar las respuestas marcadas como pendientes en las preguntas frecuentes.
-- Fotos y vídeos de la finca real. Los actuales son provisionales de stock.
-
-## Créditos
-
-- Fotos y vídeos provisionales: [Pexels](https://www.pexels.com), con licencia libre.
-- Fuentes: [Hina Mincho](https://fonts.google.com/specimen/Hina+Mincho) y [Zen Kaku Gothic New](https://fonts.google.com/specimen/Zen+Kaku+Gothic+New), bajo licencia SIL OFL. Se sirven desde el propio dominio.
+- [Guía Técnica del Admin](ADMIN.md): Arquitectura detallada de la base de datos, esquemas `admin` y `datos`, API y seguridad.
+- [Estado del Proyecto](ESTADO.md): Registro de avances, tareas completadas y roadmap.
+- [Video Scrub con Scroll](SCROLL-VIDEO.md): Especificación técnica para codificación de videos y keyframes optimizados para scrub.
+- [Convenciones de Código](AGENTS.md): Reglas de desarrollo y separación de estilos/lógica en Astro.
