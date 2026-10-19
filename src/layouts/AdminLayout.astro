@@ -1,0 +1,31 @@
+---
+// Documento de las páginas del admin. Comparte con la landing las fuentes y la paleta, pero no sus estilos ni scripts.
+// Los colores y el redondeo se pueden cambiar desde Apariencia (admin.settings): aquí se aplican antes de pintar.
+import { Font } from 'astro:assets';
+import { adminLayoutView } from './AdminLayout.view';
+import type { Props } from './AdminLayout.types';
+import '../styles/admin.css';
+
+const { title } = Astro.props;
+// Tema, CSS de Apariencia y tipografías, favicon y el script que fija el tema antes de pintar.
+const { appearance, htmlClass, isAutoTheme, fontVars, css, favicon, themeScript } = adminLayoutView(Astro.props);
+---
+
+<!doctype html>
+<html lang="es-CO" class={htmlClass}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#1d3324" />
+    <title>{title} · {appearance.name}</title>
+    {appearance.logo ? <link rel="icon" href={favicon} /> : <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48" />}
+    <link rel="icon" type="image/png" href={favicon} sizes="192x192" />
+    {fontVars.map((v) => <Font cssVariable={v as '--font-hina'} preload />)}
+    <style id="admin-appearance" set:html={css} is:inline></style>
+    {isAutoTheme && <script is:inline set:html={themeScript}></script>}
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

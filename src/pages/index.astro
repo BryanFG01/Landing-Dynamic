@@ -1,0 +1,13 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Landing from '@/features/landing/components/Landing.astro';
+import { loadPortada } from '@/features/landing/server/portada';
+
+// Se prerenderiza con el contenido publicado desde el panel (Sitio web → Publicar lanza un nuevo despliegue).
+const { content, jsonLd } = await loadPortada(Astro.site);
+---
+
+<Layout>
+  <script slot="head" type="application/ld+json" set:html={jsonLd} />
+  <Landing site={content} />
+</Layout>

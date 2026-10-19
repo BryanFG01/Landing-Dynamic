@@ -1,0 +1,65 @@
+import { defineMiddleware } from 'astro:middleware';
+import { getSessionUser } from '@/features/admin/auth/server/auth';
+import { DbConfigError } from '@/shared/server/db';
+import { fail } from '@/shared/server/http';
+
+// Rutas del admin que no piden sesión.
+const PUBLIC = new Set(['/admin/login', '/api/admin/auth/login']);
+// API que solo pueden usar los administradores (configurar el panel). Los usuarios solo usan /m/<módulo>, /files,
+// /nav y /dashboard, y allí se comprueba el permiso de cada módulo.
+const ADMIN_ONLY = /^(\/api\/admin\/(modules|groups|users|sql|tables|settings|site)|\/admin\/vista-previa)(\/|$)/;
+
+/** Mensaje para el panel cuando la base falla. El detalle va a los logs (en Vercel: Logs del proyecto). */
+function dbFailure(error: unknown, isApi: boolean) {
+  console.error('[admin] error de base de datos:', error);
+  const code = error && typeof error === 'object' && 'code' in error ? String(error.code) : '';
+  const message =
+    error instanceof DbConfigError
+      ? 'El panel no está configurado: falta la conexión a la base de datos (DATABASE_URL).'
+      : // Tabla o columna inexistente: el código va por delante de la base.
+        code === '42P01' || code === '42703'
+        ? 'La base de datos no está actualizada: falta aplicar una migración (pnpm db:migrate con la base de producción).'
+        : 'No se pudo conectar con la base de datos. Inténtalo de nuevo en un momento.';
+  if (isApi) return fail(503, message);
+  return new Response(message, { status: 503, headers: { 'content-type': 'text/plain; charset=utf-8' } });
+}
+
+export const onRequest = defineMiddleware(async (ctx, next) => {
+  const path = ctx.url.pathname.replace(/\/+$/, '') || '/';
+  const isPage = path === '/admin' || path.startsWith('/admin/');
+  const isApi = path.startsWith('/api/admin/');
+  // La landing (prerenderizada) no pasa por aquí en ejecución.
+  if (ctx.isPrerendered || (!isPage && !isApi)) return next();
+
+  // Las peticiones que cambian datos deben venir del propio sitio (la cookie es SameSite=Lax, esto lo refuerza).
+  if (isApi && ctx.request.method !== 'GET' && ctx.request.headers.get('origin') !== ctx.url.origin) {
+    return fail(403, 'Origen no permitido.');
+  }
+
+  let response: Response;
+  try {
+    const user = await getSessionUser(ctx.cookies);
+    if (user) ctx.locals.adminUser = user;
+    else if (!PUBLIC.has(path)) {
+      if (isApi) return fail(401, 'Tu sesión ha caducado. Vuelve a entrar.');
+      return ctx.redirect(`/admin/login?next=${encodeURIComponent(path + ctx.url.search)}`);
+    }
+    // Con sesión iniciada no tiene sentido ver el login.
+    if (user && path === '/admin/login') return ctx.redirect('/admin');
+    if (user && user.role !== 'admin' && ADMIN_ONLY.test(path)) {
+      return fail(403, 'Esta parte del panel es solo para administradores.');
+    }
+    response = await next();
+  } catch (error) {
+    // Base sin configurar o caída: mensaje claro en vez de un 500 vacío.
+    return dbFailure(error, isApi);
+  }
+
+  try {
+    response.headers.set('x-robots-tag', 'noindex, nofollow');
+    if (isPage) response.headers.set('cache-control', 'no-store');
+  } catch {
+    // Algunas respuestas (redirecciones) tienen cabeceras inmutables.
+  }
+  return response;
+});

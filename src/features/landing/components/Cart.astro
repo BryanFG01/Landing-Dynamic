@@ -1,0 +1,97 @@
+---
+import './styles/Cart.css';
+import Icon from './Icon.astro';
+import { cartView } from './Cart.view';
+import type { Props } from './Cart.types';
+
+const { site } = Astro.props;
+const { data, json, side } = cartView(site);
+---
+
+<div data-cart-root data-side={side} class="cart-root">
+  <!-- Botón flotante del carrito -->
+  <button
+    type="button"
+    data-cart-launcher
+    data-cart-open
+    data-empty="true"
+    class="cart-launcher"
+    aria-label="Ver carrito de compras"
+  >
+    <Icon name="shoppingBag" class="size-5 shrink-0" />
+    <span class="cart-launcher-text">Mi pedido</span>
+    <span data-cart-badge class="cart-badge"><span data-cart-count>0</span></span>
+    <span data-cart-total class="cart-launcher-total">$0</span>
+  </button>
+
+  <!-- Fondo oscuro con desenfoque -->
+  <div data-cart-backdrop class="cart-backdrop" aria-hidden="true"></div>
+
+  <!-- Panel lateral del carrito -->
+  <aside data-cart-drawer class="cart-drawer" role="dialog" aria-modal="true" aria-labelledby="cart-heading">
+    <header class="cart-header">
+      <div class="cart-title-row">
+        <Icon name="shoppingBag" class="size-6 text-teja" />
+        <h2 id="cart-heading" class="cart-title">Tu Pedido <span data-cart-drawer-count class="text-sm font-normal text-muted-gray"></span></h2>
+      </div>
+      <button type="button" data-cart-close class="cart-close-btn" aria-label="Cerrar carrito">
+        <Icon name="x" class="size-4" />
+      </button>
+    </header>
+
+    <div data-cart-items class="cart-items">
+      <!-- Los productos se inyectan dinámicamente mediante cart.ts -->
+    </div>
+
+    <footer class="cart-footer">
+      <div class="cart-form-fields">
+        <input
+          type="text"
+          data-cart-input-nombre
+          class="cart-input"
+          placeholder="Tu nombre (opcional)"
+          aria-label="Tu nombre"
+          maxlength="80"
+        />
+        <input
+          type="text"
+          data-cart-input-direccion
+          class="cart-input"
+          placeholder="Dirección o barrio de entrega"
+          aria-label="Dirección de entrega"
+          maxlength="140"
+        />
+        <input
+          type="text"
+          data-cart-input-nota
+          class="cart-input"
+          placeholder="Nota o indicaciones (opcional)"
+          aria-label="Nota adicional"
+          maxlength="140"
+        />
+      </div>
+
+      <div class="cart-summary-row">
+        <span class="cart-total-label">Total estimado:</span>
+        <span data-cart-drawer-total class="cart-total-val">$0</span>
+      </div>
+
+      <button type="button" data-cart-checkout class="cart-checkout-btn">
+        <Icon name="whatsapp" class="size-5" />
+        <span>Pedir por WhatsApp</span>
+      </button>
+
+      <p class="cart-legal">
+        {data.aviso}{' '}
+        <a href={data.privacidad} target="_blank" rel="noopener">política de tratamiento de datos</a>.
+      </p>
+    </footer>
+  </aside>
+
+  <!-- Configuración serializada para el script cliente -->
+  <script type="application/json" data-cart-config set:html={json} is:inline></script>
+</div>
+
+<script>
+  import '../scripts/cart';
+</script>

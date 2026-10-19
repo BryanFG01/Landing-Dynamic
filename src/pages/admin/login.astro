@@ -1,0 +1,28 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import { LoginView } from '@/features/admin/auth/ui/LoginView';
+import { loginPage } from '@/features/admin/auth/ui/lib/loginPage';
+import { getAppearance } from '@/features/admin/appearance/server/settings';
+import foto from '../../assets/paseo/bascula.webp';
+import { getSiteOrDefaults } from '@/features/landing/server/contenidoOpcional';
+
+export const prerender = false;
+
+// Si ya hay sesión, el middleware redirige a /admin antes de llegar aquí.
+const appearance = await getAppearance();
+// El login se viste con la plantilla publicada en la web (colores y tipografías). Si no se puede leer, la de siempre.
+const site = await getSiteOrDefaults('login');
+const { theme, extraCss, fonts, view } = loginPage(appearance, site, foto.src);
+---
+
+<AdminLayout title="Entrar" theme={theme} appearance={appearance} extraCss={extraCss} fonts={fonts}>
+  <LoginView
+    client:only="react"
+    image={view.image}
+    brand={view.brand}
+    tagline={view.tagline}
+    logo={view.logo}
+    title={view.title}
+    text={view.text}
+  />
+</AdminLayout>

@@ -1,0 +1,37 @@
+/* Las negritas de la nota, en el color del texto (no atenuadas). */
+section strong {
+  color: var(--color-crema);
+}
+
+/* ─── Shop Template Product Cards ─── */
+.shop-card {
+  border-radius: var(--radius-card, 24px);
+  background: var(--color-pure-white, #ffffff);
+  border: 1px solid var(--color-faint-border, #ebebeb);
+  transition: transform 300ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 300ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.shop-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.btn-shop-add {
+  border-radius: var(--radius-btn, 9999px);
+  background: var(--color-pure-white, #ffffff);
+  border: 1px solid var(--color-faint-border, #ebebeb);
+  color: var(--color-ink-black, #000000);
+  transition: background 200ms ease, color 200ms ease, border-color 200ms ease, transform 150ms ease, box-shadow 200ms ease;
+  cursor: pointer;
+}
+
+.btn-shop-add:hover {
+  background: var(--color-teja, #5433eb);
+  color: var(--color-on-teja, #ffffff);
+  border-color: var(--color-teja, #5433eb);
+  box-shadow: 0 4px 16px rgba(84, 51, 235, 0.3);
+}
+
+.btn-shop-add:active {
+  transform: scale(0.97);
+}
