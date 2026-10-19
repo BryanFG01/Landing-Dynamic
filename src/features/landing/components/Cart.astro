@@ -76,10 +76,21 @@ const { data, json, side } = cartView(site);
         <span data-cart-drawer-total class="cart-total-val">$0</span>
       </div>
 
-      <button type="button" data-cart-checkout class="cart-checkout-btn">
-        <Icon name="whatsapp" class="size-5" />
-        <span>Pedir por WhatsApp</span>
-      </button>
+      {/* Botón de pasarela de pago en línea */}
+      {(data.modoPago === 'pasarela' || data.modoPago === 'ambos') && (
+        <button type="button" data-cart-gateway class="cart-gateway-btn">
+          <Icon name="creditCard" class="size-5" />
+          <span>{data.textoBotonPasarela}</span>
+        </button>
+      )}
+
+      {/* Botón de pedido por WhatsApp */}
+      {(data.modoPago === 'whatsapp' || data.modoPago === 'ambos' || !data.modoPago) && (
+        <button type="button" data-cart-checkout class="cart-checkout-btn">
+          <Icon name="whatsapp" class="size-5" />
+          <span>{data.textoBotonWhatsApp}</span>
+        </button>
+      )}
 
       <p class="cart-legal">
         {data.aviso}{' '}

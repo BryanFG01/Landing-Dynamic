@@ -1,0 +1,50 @@
+---
+import './styles/Nosotros.css';
+import Icon from './Icon.astro';
+import Media from './Media.astro';
+import { rich } from '../domain/sitio';
+import type { Props } from './Nosotros.types';
+
+const { bloque } = Astro.props;
+---
+
+<section id="nosotros" aria-labelledby="nosotros-title" class="nosotros-section px-4 py-24 md:px-12 xl:px-24">
+  <div class="mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-2">
+    <div>
+      {bloque.eyebrow && <p data-reveal class="text-sm font-semibold tracking-wider text-teja uppercase">{bloque.eyebrow}</p>}
+      <h2 id="nosotros-title" data-reveal style="--d:100ms" class="mt-4 text-3xl font-display lg:text-5xl">{bloque.titulo}</h2>
+      {bloque.subtexto && <p data-reveal style="--d:150ms" class="mt-3 text-lg font-medium text-crema/90">{bloque.subtexto}</p>}
+      <p data-reveal style="--d:200ms" class="mt-5 text-base leading-relaxed text-crema/75 lg:text-lg" set:html={rich(bloque.texto)} />
+
+      {
+        bloque.puntos && bloque.puntos.length > 0 && (
+          <div data-reveal style="--d:250ms" class="mt-8 grid gap-4 sm:grid-cols-2">
+            {bloque.puntos.map((punto) => (
+              <div class="nosotros-card">
+                <div class="flex items-center gap-2 text-teja">
+                  <Icon name="check" class="size-4 shrink-0" />
+                  <h3 class="font-semibold text-sm text-crema">{punto.titulo}</h3>
+                </div>
+                {punto.texto && <p class="mt-2 text-xs leading-normal text-crema/70">{punto.texto}</p>}
+              </div>
+            ))}
+          </div>
+        )
+      }
+    </div>
+
+    {
+      bloque.imagen?.src && (
+        <div data-reveal style="--d:150ms" class="nosotros-image-wrapper mx-auto w-full max-w-lg aspect-4/3 lg:aspect-square">
+          <Media
+            img={bloque.imagen}
+            widths={[480, 720, 960]}
+            sizes="(min-width: 1024px) 500px, 90vw"
+            pictureClass="block size-full"
+            class="size-full object-cover"
+          />
+        </div>
+      )
+    }
+  </div>
+</section>

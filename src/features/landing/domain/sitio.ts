@@ -259,11 +259,21 @@ export interface BloqueFinal extends Base {
   texto: string;
   boton: string;
 }
+export interface BloqueNosotros extends Base {
+  tipo: 'nosotros';
+  eyebrow: string;
+  titulo: string;
+  texto: string;
+  subtexto: string;
+  imagen: Img;
+  puntos: { titulo: string; texto: string }[];
+}
 
 export type Bloque =
   | BloquePaseo
   | BloqueFrase
   | BloqueProductos
+  | BloqueNosotros
   | BloqueDiferencia
   | BloqueOpiniones
   | BloquePreguntas
@@ -271,6 +281,29 @@ export type Bloque =
   | BloqueFinal;
 
 export type TipoBloque = Bloque['tipo'];
+
+export interface MenuItem {
+  label: string;
+  href: string;
+}
+
+export interface CabeceraConfig {
+  estilo: 'flotante' | 'barra';
+  posicion: keyof typeof POSICIONES_MENU;
+  mostrarCarrito: YesNo;
+  mostrarIngresar: YesNo;
+  menuModo: 'auto' | 'personalizado';
+  menuItems: MenuItem[];
+}
+
+export interface PagosConfig {
+  modo: 'whatsapp' | 'pasarela' | 'ambos';
+  pasarela: 'mercadopago' | 'wompi';
+  llavePublica: string;
+  urlCheckout: string;
+  textoBotonPasarela: string;
+  textoBotonWhatsApp: string;
+}
 
 /** Política de tratamiento de datos (Ley 1581 de 2012): la página /privacidad y el aviso del chat. */
 export interface Legal {
@@ -293,6 +326,8 @@ export interface SiteContent {
   tema: Tema;
   marca: Marca;
   contacto: Contacto;
+  cabecera: CabeceraConfig;
+  pagos: PagosConfig;
   seo: Seo;
   chat: ChatConfig;
   legal: Legal;
@@ -343,6 +378,28 @@ export const SITE_DEFAULTS: SiteContent = {
     instagram: '@[cuenta]',
     instagramUrl: 'https://www.instagram.com/',
     mensajePedido: 'Hola, {marca}. Quiero hacer un pedido a domicilio.',
+  },
+  cabecera: {
+    estilo: 'flotante',
+    posicion: 'centro',
+    mostrarCarrito: 'si',
+    mostrarIngresar: 'si',
+    menuModo: 'auto',
+    menuItems: [
+      { label: 'Inicio', href: '#inicio' },
+      { label: 'Productos', href: '#productos' },
+      { label: 'Nosotros', href: '#nosotros' },
+      { label: 'Preguntas', href: '#preguntas' },
+      { label: 'Contacto', href: '#pedir' },
+    ],
+  },
+  pagos: {
+    modo: 'whatsapp',
+    pasarela: 'mercadopago',
+    llavePublica: '',
+    urlCheckout: '',
+    textoBotonPasarela: 'Pagar con PSE / Tarjeta / Nequi',
+    textoBotonWhatsApp: 'Pedir por WhatsApp',
   },
   seo: {
     titulo: 'El Agropecuario · Pollo campesino y huevos colorados a domicilio',
@@ -531,6 +588,22 @@ Esta política rige desde el {actualizado}. Conservamos los datos mientras sean 
           precio: `${pollo} / lb`,
           foto: { src: '', alt: '' },
         },
+      ],
+    },
+    {
+      id: 'nosotros',
+      tipo: 'nosotros',
+      visible: true,
+      eyebrow: 'Sobre Nosotros',
+      titulo: 'Crianza campesina, sabor auténtico',
+      texto:
+        'Nacimos en el campo con un propósito claro: llevar a tu mesa alimentos frescos, limpios y cultivados con respeto por la tierra y los animales. Creemos en una producción transparente donde sabes exactamente de dónde viene lo que comes.',
+      subtexto: 'Tradición campesina directo a tu hogar.',
+      imagen: { src: 'asset:gallinas', alt: 'Gallinas en libertad al aire libre' },
+      puntos: [
+        { titulo: '100% Campo Real', texto: 'Aves libres, sin hormonas ni procesos artificiales.' },
+        { titulo: 'Frescura del Día', texto: 'Recolección diaria y entregas el mismo día de tu pedido.' },
+        { titulo: 'Atención Directa', texto: 'Trato personalizado por WhatsApp o pasarela en cada compra.' },
       ],
     },
     {
@@ -901,15 +974,122 @@ export const BLOCK_DEFS: Record<TipoBloque, BlockDef> = conColores({
       { key: 'boton', label: 'Texto del botón', type: 'text', max: 40 },
     ],
   },
+  nosotros: {
+    nombre: 'Sobre nosotros',
+    descripcion: 'Historia de la marca, valores de confianza y fotografía destacada.',
+    ancla: 'nosotros',
+    menu: 'Nosotros',
+    fields: [
+      { key: 'eyebrow', label: 'Antetítulo', type: 'text', max: 50 },
+      { key: 'titulo', label: 'Título', type: 'text', max: 90 },
+      { key: 'texto', label: 'Texto principal', type: 'textarea', max: 600, help: RICH },
+      { key: 'subtexto', label: 'Lema o texto secundario', type: 'text', max: 200 },
+      { key: 'imagen', label: 'Fotografía destacada', type: 'image' },
+      {
+        key: 'puntos',
+        label: 'Puntos clave o valores',
+        type: 'list',
+        itemLabel: 'Punto',
+        max: 6,
+        fields: [
+          { key: 'titulo', label: 'Título', type: 'text', max: 60 },
+          { key: 'texto', label: 'Descripción', type: 'textarea', max: 200 },
+        ],
+      },
+    ],
+  },
 });
 
 /** Ajustes generales del sitio, en el mismo formato que los bloques. */
 export const SETTINGS_DEFS: {
-  key: 'tema' | 'marca' | 'contacto' | 'seo' | 'chat' | 'legal';
+  key: 'tema' | 'cabecera' | 'pagos' | 'marca' | 'contacto' | 'seo' | 'chat' | 'legal';
   nombre: string;
   descripcion: string;
   fields: FieldDef[];
 }[] = [
+  {
+    key: 'cabecera',
+    nombre: 'Cabecera y menú',
+    descripcion: 'Estilo de navegación, posición del menú, visibilidad del carrito y enlaces personalizados.',
+    fields: [
+      {
+        key: 'estilo',
+        label: 'Estilo de cabecera',
+        type: 'select',
+        options: { flotante: 'Cápsula flotante moderna', barra: 'Barra completa e-commerce (ancho total)' },
+      },
+      {
+        key: 'posicion',
+        label: 'Posición del menú (escritorio)',
+        type: 'select',
+        options: POSICIONES_MENU,
+      },
+      { key: 'mostrarCarrito', label: 'Mostrar botón de carrito en cabecera', type: 'select', options: YES_NO },
+      { key: 'mostrarIngresar', label: 'Mostrar botón de ingresar al panel', type: 'select', options: YES_NO },
+      {
+        key: 'menuModo',
+        label: 'Modo del menú',
+        type: 'select',
+        options: { auto: 'Automático (según bloques visibles)', personalizado: 'Personalizado (lista manual)' },
+        help: 'Si eliges "Personalizado", los enlaces de abajo sustituyen el menú automático.',
+      },
+      {
+        key: 'menuItems',
+        label: 'Enlaces del menú',
+        type: 'list',
+        itemLabel: 'Enlace',
+        max: 10,
+        help: 'Usa #seccion (ej. #inicio, #productos, #nosotros, #preguntas) o una URL completa.',
+        fields: [
+          { key: 'label', label: 'Texto del enlace', type: 'text', max: 30 },
+          { key: 'href', label: 'Destino (#seccion o https://)', type: 'text', max: 120 },
+        ],
+      },
+    ],
+  },
+  {
+    key: 'pagos',
+    nombre: 'Pasarela y pagos',
+    descripcion:
+      'Configura cómo compran tus clientes: pedido directo por WhatsApp, pasarela de pago online (Mercado Pago / Wompi), o ambos.',
+    fields: [
+      {
+        key: 'modo',
+        label: 'Modalidad de pago del carrito',
+        type: 'select',
+        options: {
+          whatsapp: 'Solo WhatsApp (como actualmente)',
+          pasarela: 'Solo Pasarela de Pago Online',
+          ambos: 'Ofrecer ambos métodos (WhatsApp o Pasarela)',
+        },
+      },
+      {
+        key: 'pasarela',
+        label: 'Proveedor de pasarela',
+        type: 'select',
+        options: {
+          mercadopago: 'Mercado Pago (Tarjetas, PSE, Nequi, Efecty)',
+          wompi: 'Wompi Bancolombia (PSE, Tarjetas, Nequi)',
+        },
+      },
+      {
+        key: 'llavePublica',
+        label: 'Llave pública de la pasarela (Public Key)',
+        type: 'text',
+        max: 200,
+        help: 'Tu llave pública de Mercado Pago o Wompi (empieza por APP_USR o pub_).',
+      },
+      {
+        key: 'urlCheckout',
+        label: 'Enlace directo de pago (opcional)',
+        type: 'text',
+        max: 250,
+        help: 'Si usas un link de pago fijo o generado, pégalo aquí para redirigir directamente.',
+      },
+      { key: 'textoBotonPasarela', label: 'Texto del botón de pasarela', type: 'text', max: 60 },
+      { key: 'textoBotonWhatsApp', label: 'Texto del botón de WhatsApp', type: 'text', max: 60 },
+    ],
+  },
   {
     key: 'tema',
     nombre: 'Colores y tipografía',
@@ -1246,11 +1426,15 @@ export const links = (site: SiteContent) => ({
   telefono: `tel:+${site.contacto.whatsapp}`,
 });
 
-/** Menú: los bloques visibles que tienen entrada de menú, en su orden. */
-export const menu = (site: SiteContent) =>
-  site.bloques
-    .filter((b) => b.visible && BLOCK_DEFS[b.tipo].menu)
+/** Menú: los enlaces personalizados de la cabecera, o los bloques visibles automáticos en su orden. */
+export const menu = (site: SiteContent) => {
+  if (site.cabecera?.menuModo === 'personalizado' && site.cabecera.menuItems?.length) {
+    return site.cabecera.menuItems;
+  }
+  return site.bloques
+    .filter((b) => b.visible && BLOCK_DEFS[b.tipo]?.menu)
     .map((b) => ({ label: BLOCK_DEFS[b.tipo].menu!, href: `#${BLOCK_DEFS[b.tipo].ancla}` }));
+};
 
 const escapeHtml = (s: string) =>
   s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);

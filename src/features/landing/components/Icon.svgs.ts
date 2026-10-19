@@ -18,6 +18,7 @@ import whatsapp from '@phosphor-icons/core/assets/light/whatsapp-logo-light.svg?
 import shoppingBag from '@phosphor-icons/core/assets/light/shopping-bag-light.svg?raw';
 import shoppingCart from '@phosphor-icons/core/assets/light/shopping-cart-light.svg?raw';
 import trash from '@phosphor-icons/core/assets/light/trash-light.svg?raw';
+import creditCard from '@phosphor-icons/core/assets/light/credit-card-light.svg?raw';
 
 export const icons = {
   arrowUpRight,
@@ -25,6 +26,7 @@ export const icons = {
   arrowDown,
   check,
   clock,
+  creditCard,
   envelope,
   gift,
   instagram,

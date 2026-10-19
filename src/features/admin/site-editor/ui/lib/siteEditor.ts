@@ -34,6 +34,8 @@ export const TEMPLATES_SECTION: Section = { kind: 'templates' };
 
 export const SETTING_ICONS: Record<SettingKey, string> = {
   tema: 'palette',
+  cabecera: 'gear',
+  pagos: 'money',
   marca: 'star',
   contacto: 'map-pin',
   seo: 'file',

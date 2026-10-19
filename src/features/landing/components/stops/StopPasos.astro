@@ -5,14 +5,14 @@ import type { ItemsProps as Props } from './types';
 const { items } = Astro.props;
 ---
 
-<ol class="mt-6 flex max-w-md flex-col gap-4">
+<ol class="mt-6 flex max-w-md flex-col gap-4 text-left">
   {
     items.map((it, n) => (
-      <li class="flex gap-4">
-        <span class="font-display text-2xl text-teja">{n + 1}</span>
-        <div>
-          <h3 class="text-lg">{it.valor}</h3>
-          {it.etiqueta && <p class="text-sm text-crema/70">{it.etiqueta}</p>}
+      <li class="flex items-start gap-4 text-left">
+        <span class="font-display text-2xl text-teja shrink-0 leading-none mt-1">{n + 1}</span>
+        <div class="text-left">
+          <h3 class="text-lg leading-snug">{it.valor}</h3>
+          {it.etiqueta && <p class="mt-1 text-sm text-crema/70 leading-normal">{it.etiqueta}</p>}
         </div>
       </li>
     ))

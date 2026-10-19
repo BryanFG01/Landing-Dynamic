@@ -11,7 +11,7 @@ const asset = assetFor(site.marca.logo.src);
 const imgClass = 'size-[2em] shrink-0 rounded-full bg-white object-cover ring-1 ring-crema/20';
 ---
 
-<span class:list={['inline-flex items-center gap-[0.5em] leading-none whitespace-nowrap', className]}>
+<span class:list={['inline-flex items-center gap-[0.5em] leading-snug', className]}>
   {
     asset ? (
       <Image
@@ -30,5 +30,5 @@ const imgClass = 'size-[2em] shrink-0 rounded-full bg-white object-cover ring-1 
       site.marca.logo.src && <img src={site.marca.logo.src} alt="" aria-hidden="true" width="96" height="96" class={imgClass} />
     )
   }
-  <span class="font-display">{site.marca.nombre}</span>
+  <span class="font-display leading-tight">{site.marca.nombre}</span>
 </span>

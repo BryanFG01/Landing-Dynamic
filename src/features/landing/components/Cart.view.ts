@@ -7,6 +7,12 @@ export function cartView(site: SiteContent) {
     marca: site.marca.nombre,
     mensajePedido: site.contacto.mensajePedido,
     registrar: site.chat.registrar === 'si',
+    modoPago: site.pagos?.modo ?? 'whatsapp',
+    pasarela: site.pagos?.pasarela ?? 'mercadopago',
+    llavePublica: site.pagos?.llavePublica ?? '',
+    urlCheckout: site.pagos?.urlCheckout ?? '',
+    textoBotonPasarela: site.pagos?.textoBotonPasarela || 'Pagar con PSE / Tarjeta / Nequi',
+    textoBotonWhatsApp: site.pagos?.textoBotonWhatsApp || 'Pedir por WhatsApp',
     aviso: conMarca(site.legal.aceptacion, site),
     privacidad: PRIVACIDAD_URL,
   };

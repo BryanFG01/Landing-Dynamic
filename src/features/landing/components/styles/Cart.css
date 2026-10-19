@@ -410,6 +410,35 @@ body:has(#menu[data-open]) .cart-root {
   box-shadow: none;
 }
 
+.cart-gateway-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  width: 100%;
+  padding: 0.875rem 1.25rem;
+  border-radius: 9999px;
+  background: #009ee3;
+  color: #ffffff;
+  border: none;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 18px rgba(0, 158, 227, 0.35);
+  transition: transform 200ms ease, box-shadow 200ms ease, filter 200ms ease;
+  text-decoration: none;
+}
+
+.cart-gateway-btn:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+  box-shadow: 0 6px 22px rgba(0, 158, 227, 0.45);
+}
+
+.cart-gateway-btn:active {
+  transform: scale(0.98);
+}
+
 .cart-legal {
   font-size: 0.75rem;
   color: var(--color-muted-gray, #787574);

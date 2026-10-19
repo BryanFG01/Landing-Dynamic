@@ -60,6 +60,7 @@ export function initCart() {
   const drawerTotalEl = root.querySelector<HTMLElement>('[data-cart-drawer-total]');
   const drawerCountEl = root.querySelector<HTMLElement>('[data-cart-drawer-count]');
   const checkoutBtn = root.querySelector<HTMLButtonElement>('[data-cart-checkout]');
+  const gatewayBtn = root.querySelector<HTMLButtonElement>('[data-cart-gateway]');
 
   const inputNombre = root.querySelector<HTMLInputElement>('[data-cart-input-nombre]');
   const inputDireccion = root.querySelector<HTMLInputElement>('[data-cart-input-direccion]');
@@ -363,6 +364,27 @@ export function initCart() {
 
     // Abrir WhatsApp
     window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+  });
+
+  // Pagar con Pasarela de Pago (Mercado Pago / Wompi)
+  gatewayBtn?.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (items.length === 0) return;
+
+    saveInputs();
+    const { total } = calcTotals();
+    const pasarelaNombre = config.pasarela === 'wompi' ? 'Wompi Bancolombia' : 'Mercado Pago';
+
+    if (config.urlCheckout) {
+      window.open(config.urlCheckout, '_blank', 'noopener,noreferrer');
+      return;
+    }
+
+    alert(
+      `Iniciando pago seguro con ${pasarelaNombre} por valor de ${formatPesos(total)}.\n\n` +
+      `Para pagos en producción con PSE, Nequi y tarjetas de crédito, ingresa a tu panel de administración:\n` +
+      `"Sitio web → Pasarela y pagos" para colocar tu Llave Pública o tu Enlace de Checkout.`
+    );
   });
 
   // Primer render al cargar

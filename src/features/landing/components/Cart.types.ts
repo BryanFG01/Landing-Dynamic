@@ -9,4 +9,10 @@ export interface CartConfigData {
   marca: string;
   mensajePedido: string;
   registrar: boolean;
+  modoPago?: 'whatsapp' | 'pasarela' | 'ambos';
+  pasarela?: 'mercadopago' | 'wompi';
+  llavePublica?: string;
+  urlCheckout?: string;
+  textoBotonPasarela?: string;
+  textoBotonWhatsApp?: string;
 }

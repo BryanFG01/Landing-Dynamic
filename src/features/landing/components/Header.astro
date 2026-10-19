@@ -8,10 +8,18 @@ import type { Props } from './Header.types';
 const { site } = Astro.props;
 const { marca } = site;
 const links = linksFor(site);
-// El menú son los bloques visibles que tienen entrada (Inicio, Productos, Opiniones, Preguntas).
 const nav = menu(site);
-// Posición de la barra en escritorio (Sitio web → Colores y tipografía → Menú). En el celular, siempre al centro.
+const cabecera = site.cabecera ?? {
+  estilo: 'flotante',
+  posicion: site.tema.menuPosicion,
+  mostrarCarrito: 'si',
+  mostrarIngresar: 'si',
+  menuModo: 'auto',
+  menuItems: [],
+};
+const isBarra = cabecera.estilo === 'barra';
 const POSICION = { izquierda: 'lg:justify-start', centro: 'lg:justify-center', derecha: 'lg:justify-end' } as const;
+const posicionClase = POSICION[cabecera.posicion ?? site.tema.menuPosicion] ?? POSICION.centro;
 ---
 
 <a
@@ -23,20 +31,27 @@ const POSICION = { izquierda: 'lg:justify-start', centro: 'lg:justify-center', d
 
 <header
   class:list={[
-    'zona-menu pointer-events-none fixed inset-x-0 top-0 z-50 flex justify-center px-4 pt-6 lg:px-8 xl:px-20',
-    POSICION[site.tema.menuPosicion],
+    'zona-menu fixed inset-x-0 top-0 z-50 transition-all duration-300',
+    isBarra
+      ? 'w-full border-b border-crema/10 bg-bg/85 px-4 py-3.5 backdrop-blur-xl md:px-12 xl:px-24'
+      : ['pointer-events-none flex justify-center px-4 pt-6 lg:px-8 xl:px-20', posicionClase],
   ]}
 >
   <div
-    class="pointer-events-auto flex w-max items-center gap-6 rounded-full bg-bg/60 p-2 pl-6 ring-1 ring-crema/10 backdrop-blur-xl lg:gap-5"
+    class:list={[
+      'flex items-center',
+      isBarra
+        ? 'mx-auto w-full max-w-7xl justify-between gap-6'
+        : 'pointer-events-auto w-max gap-6 rounded-full bg-bg/60 p-2 pl-6 ring-1 ring-crema/10 backdrop-blur-xl lg:gap-5',
+    ]}
   >
     <a href="#inicio" class="flex h-9 items-center rounded-full text-crema" aria-label={`${marca.nombre}, volver al inicio`}>
-      <Logo site={site} class="text-lg" />
+      <Logo site={site} class="text-lg whitespace-nowrap" />
     </a>
 
     <nav aria-label="Principal" class="relative hidden lg:block">
-      <span aria-hidden="true" class="nav-indicator absolute top-0 left-0 h-9 rounded-full bg-crema/[0.07]"></span>
-      <ul class="relative flex items-center text-sm">
+      {!isBarra && <span aria-hidden="true" class="nav-indicator absolute top-0 left-0 h-9 rounded-full bg-crema/[0.07]"></span>}
+      <ul class="relative flex items-center gap-1 text-sm">
         {
           nav.map((item) => (
             <li>
@@ -53,36 +68,47 @@ const POSICION = { izquierda: 'lg:justify-start', centro: 'lg:justify-center', d
       </ul>
     </nav>
 
-    <div class="flex items-center gap-1">
-      <!-- Acceso al panel: discreto, para no competir con "Pedir". En móvil solo el icono. -->
-      <a
-        href="/admin/login"
-        rel="nofollow"
-        aria-label="Ingresar al panel de administración"
-        class="flex h-9 items-center gap-2 rounded-full px-2.5 text-sm text-crema/70 transition-colors duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] hover:bg-crema/10 hover:text-crema lg:px-3"
-      >
-        <Icon name="user" class="size-5" />
-        <span class="text-trim hidden lg:inline">Ingresar</span>
-      </a>
-      <!-- Botón de carrito en cabecera -->
-      <button
-        type="button"
-        data-cart-open
-        aria-label="Abrir carrito de compras"
-        class="relative flex h-9 items-center gap-1.5 rounded-full px-2.5 text-sm text-crema/80 transition-colors duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] hover:bg-crema/10 hover:text-crema"
-      >
-        <Icon name="shoppingBag" class="size-5" />
-        <span
-          data-header-cart-count
-          data-empty="true"
-          class="inline-flex size-4 items-center justify-center rounded-full bg-teja text-[10px] font-bold text-on-teja data-[empty=true]:hidden"
-        >
-          0
-        </span>
-      </button>
+    <div class="flex items-center gap-1.5">
+      {/* Acceso al panel: configurable */}
+      {
+        cabecera.mostrarIngresar !== 'no' && (
+          <a
+            href="/admin/login"
+            rel="nofollow"
+            aria-label="Ingresar al panel de administración"
+            class="flex h-9 items-center gap-2 rounded-full px-2.5 text-sm text-crema/70 transition-colors duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] hover:bg-crema/10 hover:text-crema lg:px-3"
+          >
+            <Icon name="user" class="size-5" />
+            <span class="text-trim hidden lg:inline">Ingresar</span>
+          </a>
+        )
+      }
+
+      {/* Botón de carrito en cabecera: configurable */}
+      {
+        cabecera.mostrarCarrito !== 'no' && (
+          <button
+            type="button"
+            data-cart-open
+            aria-label="Abrir carrito de compras"
+            class="relative flex h-9 items-center gap-1.5 rounded-full px-2.5 text-sm text-crema/80 transition-colors duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] hover:bg-crema/10 hover:text-crema"
+          >
+            <Icon name="shoppingBag" class="size-5" />
+            <span
+              data-header-cart-count
+              data-empty="true"
+              class="inline-flex size-4 items-center justify-center rounded-full bg-teja text-[10px] font-bold text-on-teja data-[empty=true]:hidden"
+            >
+              0
+            </span>
+          </button>
+        )
+      }
+
       <a href={links.pedir} class="btn btn-primary btn-sm px-4" rel="noopener" target="_blank">
         <span>Pedir</span>
       </a>
+
       <button
         type="button"
         class="menu-toggle relative size-9 rounded-full text-crema transition-colors duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] hover:bg-crema/10 lg:hidden"

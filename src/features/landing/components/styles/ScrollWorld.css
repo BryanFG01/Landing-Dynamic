@@ -71,6 +71,7 @@
 }
 
 [data-disenio='centrada'] .stop-body ul,
+[data-disenio='centrada'] .stop-body ol,
 [data-disenio='centrada'] .stop-body dl {
   justify-content: center;
 }
