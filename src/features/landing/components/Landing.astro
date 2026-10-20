@@ -9,6 +9,8 @@ import Faq from './Faq.astro';
 import Gift from './Gift.astro';
 import FinalCta from './FinalCta.astro';
 import Nosotros from './Nosotros.astro';
+import HeroSlider from './HeroSlider.astro';
+import Ventajas from './Ventajas.astro';
 import { landingView } from './Landing.view';
 import type { TipoBloque } from '../domain/sitio';
 import type { Props } from './Landing.types';
@@ -21,6 +23,8 @@ const bloques = landingView(site);
 // props (cada uno recibe su propio tipo de bloque).
 const COMPONENTS = {
   paseo: ScrollWorld,
+  banner: HeroSlider,
+  ventajas: Ventajas,
   frase: Tagline,
   productos: Dishes,
   nosotros: Nosotros,

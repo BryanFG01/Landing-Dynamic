@@ -1,0 +1,75 @@
+---
+import './styles/HeroSlider.css';
+import Icon from './Icon.astro';
+import Media from './Media.astro';
+import type { Props } from './HeroSlider.types';
+
+const { bloque } = Astro.props;
+const slides = bloque.slides ?? [];
+---
+
+<section id="coleccion" class="hero-slider-section">
+  <div class="hero-slider-wrapper" data-hero-slider>
+    <div class="hero-slides-container">
+      {
+        slides.map((slide, index) => (
+          <div class="hero-slide" data-hero-slide data-active={index === 0 ? 'true' : 'false'}>
+            <div class="hero-slide-content">
+              {slide.badge && <span class="hero-slide-badge">{slide.badge}</span>}
+              {slide.eyebrow && <p class="text-sm font-semibold tracking-wider text-teja uppercase">{slide.eyebrow}</p>}
+              <h2 class="hero-slide-title mt-2 font-display">{slide.titulo}</h2>
+              {slide.texto && <p class="hero-slide-text">{slide.texto}</p>}
+              {slide.boton && (
+                <div class="mt-8">
+                  <a href={slide.enlace || '#productos'} class="btn btn-primary">
+                    <span>{slide.boton}</span>
+                  </a>
+                </div>
+              )}
+            </div>
+
+            {slide.imagen?.src && (
+              <div class="hero-slide-img-wrapper">
+                <Media
+                  img={slide.imagen}
+                  widths={[480, 720, 960]}
+                  sizes="(min-width: 1024px) 500px, 90vw"
+                  pictureClass="block max-h-[400px]"
+                  class="max-h-[400px] w-auto object-contain"
+                />
+              </div>
+            )}
+          </div>
+        ))
+      }
+    </div>
+
+    {
+      slides.length > 1 && (
+        <>
+          <button type="button" class="hero-slider-nav-btn prev" data-slider-prev aria-label="Diapositiva anterior">
+            <Icon name="arrowLeft" class="size-5" />
+          </button>
+          <button type="button" class="hero-slider-nav-btn next" data-slider-next aria-label="Siguiente diapositiva">
+            <Icon name="arrowUpRight" class="size-5 rotate-45" />
+          </button>
+          <div class="hero-slider-dots">
+            {slides.map((_, i) => (
+              <button
+                type="button"
+                class="hero-slider-dot"
+                data-slider-dot
+                data-active={i === 0 ? 'true' : 'false'}
+                aria-label={`Ir a la diapositiva ${i + 1}`}
+              />
+            ))}
+          </div>
+        </>
+      )
+    }
+  </div>
+</section>
+
+<script>
+  import '../scripts/heroSlider';
+</script>

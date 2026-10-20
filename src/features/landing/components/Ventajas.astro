@@ -1,0 +1,26 @@
+---
+import './styles/Ventajas.css';
+import Icon from './Icon.astro';
+import type { Props } from './Ventajas.types';
+
+const { bloque } = Astro.props;
+const items = bloque.items ?? [];
+---
+
+<section id="ventajas" aria-label="Ventajas y garantías" class="ventajas-section">
+  <div class="ventajas-grid">
+    {
+      items.map((it) => (
+        <div class="ventaja-item" data-reveal>
+          <div class="ventaja-icon-box">
+            <Icon name={it.icono as never} class="size-6" />
+          </div>
+          <div>
+            <h3 class="ventaja-title">{it.titulo}</h3>
+            {it.texto && <p class="ventaja-text">{it.texto}</p>}
+          </div>
+        </div>
+      ))
+    }
+  </div>
+</section>

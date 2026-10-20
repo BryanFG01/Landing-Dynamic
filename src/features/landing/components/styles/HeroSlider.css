@@ -1,0 +1,168 @@
+/* Slider / Banner E-commerce */
+.hero-slider-section {
+  position: relative;
+  overflow: hidden;
+  padding: 4rem 1rem;
+}
+
+@media (min-width: 768px) {
+  .hero-slider-section {
+    padding: 6rem 3rem;
+  }
+}
+
+.hero-slider-wrapper {
+  position: relative;
+  max-width: 80rem;
+  margin: 0 auto;
+  border-radius: var(--radius-card, 1.5rem);
+  background: color-mix(in oklab, var(--color-bg) 85%, transparent);
+  border: 1px solid color-mix(in oklab, var(--color-text) 10%, transparent);
+  overflow: hidden;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+.hero-slides-container {
+  position: relative;
+  min-height: 480px;
+  display: grid;
+}
+
+.hero-slide {
+  grid-area: 1 / 1;
+  display: grid;
+  align-items: center;
+  gap: 2.5rem;
+  padding: 3rem 2rem;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(20px);
+  transition: opacity 500ms ease, transform 500ms ease, visibility 500ms;
+}
+
+@media (min-width: 1024px) {
+  .hero-slide {
+    grid-template-columns: 1.1fr 1fr;
+    padding: 4.5rem;
+  }
+}
+
+.hero-slide[data-active='true'] {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(0);
+}
+
+.hero-slide-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: 9999px;
+  background: color-mix(in oklab, var(--color-accent) 15%, transparent);
+  color: var(--color-accent);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 1rem;
+}
+
+.hero-slide-title {
+  font-size: 2.5rem;
+  line-height: 1.1;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+@media (min-width: 768px) {
+  .hero-slide-title {
+    font-size: 3.75rem;
+  }
+}
+
+.hero-slide-text {
+  margin-top: 1.25rem;
+  font-size: 1.125rem;
+  line-height: 1.6;
+  opacity: 0.8;
+  max-width: 32rem;
+}
+
+.hero-slide-img-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-height: 420px;
+}
+
+.hero-slide-img-wrapper img {
+  max-height: 400px;
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 20px 30px rgba(0, 0, 0, 0.25));
+  transition: transform 700ms ease;
+}
+
+.hero-slide[data-active='true'] .hero-slide-img-wrapper img {
+  transform: scale(1.02);
+}
+
+.hero-slider-nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 9999px;
+  background: color-mix(in oklab, var(--color-bg) 70%, transparent);
+  border: 1px solid color-mix(in oklab, var(--color-text) 15%, transparent);
+  color: var(--color-text);
+  backdrop-filter: blur(8px);
+  cursor: pointer;
+  transition: background 200ms ease, transform 200ms ease;
+}
+
+.hero-slider-nav-btn:hover {
+  background: var(--color-accent);
+  color: var(--btn-text, #ffffff);
+  transform: translateY(-50%) scale(1.08);
+}
+
+.hero-slider-nav-btn.prev {
+  left: 1rem;
+}
+
+.hero-slider-nav-btn.next {
+  right: 1rem;
+}
+
+.hero-slider-dots {
+  position: absolute;
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 0.5rem;
+  z-index: 10;
+}
+
+.hero-slider-dot {
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 9999px;
+  background: color-mix(in oklab, var(--color-text) 25%, transparent);
+  border: none;
+  cursor: pointer;
+  transition: width 300ms ease, background 300ms ease;
+}
+
+.hero-slider-dot[data-active='true'] {
+  width: 2rem;
+  background: var(--color-accent);
+}

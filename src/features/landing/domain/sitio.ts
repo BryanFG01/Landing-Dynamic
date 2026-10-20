@@ -269,8 +269,36 @@ export interface BloqueNosotros extends Base {
   puntos: { titulo: string; texto: string }[];
 }
 
+export interface SlideBanner {
+  eyebrow: string;
+  titulo: string;
+  texto: string;
+  boton: string;
+  enlace: string;
+  badge: string;
+  imagen: Img;
+}
+
+export interface BloqueBanner extends Base {
+  tipo: 'banner';
+  slides: SlideBanner[];
+}
+
+export interface VentajaItem {
+  icono: string;
+  titulo: string;
+  texto: string;
+}
+
+export interface BloqueVentajas extends Base {
+  tipo: 'ventajas';
+  items: VentajaItem[];
+}
+
 export type Bloque =
   | BloquePaseo
+  | BloqueBanner
+  | BloqueVentajas
   | BloqueFrase
   | BloqueProductos
   | BloqueNosotros
@@ -557,6 +585,42 @@ Esta política rige desde el {actualizado}. Conservamos los datos mientras sean 
           ],
           boton: 'whatsapp',
         },
+      ],
+    },
+    {
+      id: 'banner',
+      tipo: 'banner',
+      visible: true,
+      slides: [
+        {
+          eyebrow: 'Colección Exclusiva 2026',
+          titulo: 'Calidad Premium Directo a tu Puerta',
+          texto: 'Seleccionamos los mejores productos del campo para garantizar frescura, sabor auténtico y entregas puntuales.',
+          boton: 'Ver Catálogo',
+          enlace: '#productos',
+          badge: 'Envío Gratis Hoy',
+          imagen: { src: 'asset:seleccion', alt: 'Selección de productos frescos' },
+        },
+        {
+          eyebrow: 'Oferta Especial',
+          titulo: 'Combos Familiares con Descuento',
+          texto: 'Aprovecha nuestras promociones semanales en pedidos programados o compras directas por WhatsApp.',
+          boton: 'Pedir Ahora',
+          enlace: '#productos',
+          badge: '-15% en combos',
+          imagen: { src: 'asset:pollos', alt: 'Alimentos naturales' },
+        },
+      ],
+    },
+    {
+      id: 'ventajas',
+      tipo: 'ventajas',
+      visible: true,
+      items: [
+        { icono: 'truck', titulo: 'Envíos el Mismo Día', texto: 'Entregas rápidas y refrigeradas a tu puerta' },
+        { icono: 'creditCard', titulo: 'Pagos Flexibles', texto: 'Paga con PSE, Nequi, tarjeta o contra entrega' },
+        { icono: 'check', titulo: '100% Calidad Garantizada', texto: 'Frescura certificada en cada pedido' },
+        { icono: 'clock', titulo: 'Atención Directa', texto: 'Soporte y asesoría personalizada por WhatsApp' },
       ],
     },
     {
@@ -994,6 +1058,62 @@ export const BLOCK_DEFS: Record<TipoBloque, BlockDef> = conColores({
         fields: [
           { key: 'titulo', label: 'Título', type: 'text', max: 60 },
           { key: 'texto', label: 'Descripción', type: 'textarea', max: 200 },
+        ],
+      },
+    ],
+  },
+  banner: {
+    nombre: 'Banner / Slider de tienda',
+    descripcion: 'Carrusel de diapositivas tipo e-commerce con fotos de producto o colección, titulares, insignias y botones de compra.',
+    ancla: 'coleccion',
+    menu: 'Colección',
+    fields: [
+      {
+        key: 'slides',
+        label: 'Diapositivas',
+        type: 'list',
+        itemLabel: 'Diapositiva',
+        min: 1,
+        max: 5,
+        fields: [
+          { key: 'eyebrow', label: 'Antetítulo / Etiqueta', type: 'text', max: 40 },
+          { key: 'titulo', label: 'Título principal', type: 'text', max: 80 },
+          { key: 'texto', label: 'Descripción breve', type: 'textarea', max: 250 },
+          { key: 'boton', label: 'Texto del botón', type: 'text', max: 30 },
+          { key: 'enlace', label: 'Enlace del botón (ej. #productos)', type: 'text', max: 100 },
+          { key: 'badge', label: 'Insignia destacada (ej. -20% OFF)', type: 'text', max: 30 },
+          { key: 'imagen', label: 'Fotografía de producto o modelo', type: 'image' },
+        ],
+      },
+    ],
+  },
+  ventajas: {
+    nombre: 'Franja de ventajas y confianza',
+    descripcion: 'Franja de beneficios clave para generar confianza (envíos, garantías, soporte, métodos de pago).',
+    ancla: 'ventajas',
+    fields: [
+      {
+        key: 'items',
+        label: 'Beneficios o ventajas',
+        type: 'list',
+        itemLabel: 'Beneficio',
+        min: 2,
+        max: 4,
+        fields: [
+          {
+            key: 'icono',
+            label: 'Icono',
+            type: 'select',
+            options: {
+              truck: 'Camión (Envíos)',
+              check: 'Check (Garantía)',
+              clock: 'Reloj (Rapidez / Horario)',
+              creditCard: 'Tarjeta (Pagos seguros)',
+              gift: 'Regalo (Promociones)',
+            },
+          },
+          { key: 'titulo', label: 'Título', type: 'text', max: 40 },
+          { key: 'texto', label: 'Detalle o descripción', type: 'text', max: 80 },
         ],
       },
     ],

@@ -1,0 +1,73 @@
+/* Franja de Ventajas y Confianza */
+.ventajas-section {
+  position: relative;
+  padding: 2.5rem 1rem;
+}
+
+@media (min-width: 768px) {
+  .ventajas-section {
+    padding: 3.5rem 3rem;
+  }
+}
+
+.ventajas-grid {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: 1.5rem;
+  max-width: 80rem;
+  margin: 0 auto;
+}
+
+@media (min-width: 640px) {
+  .ventajas-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .ventajas-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.ventaja-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem;
+  border-radius: var(--radius-card-sm, 1rem);
+  background: color-mix(in oklab, var(--color-bg) 65%, transparent);
+  border: 1px solid color-mix(in oklab, var(--color-text) 8%, transparent);
+  backdrop-filter: blur(8px);
+  transition: transform 200ms ease, border-color 200ms ease;
+}
+
+.ventaja-item:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in oklab, var(--color-accent) 35%, transparent);
+}
+
+.ventaja-icon-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 9999px;
+  background: color-mix(in oklab, var(--color-accent) 15%, transparent);
+  color: var(--color-accent);
+  flex-shrink: 0;
+}
+
+.ventaja-title {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.ventaja-text {
+  margin-top: 0.25rem;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  opacity: 0.7;
+}
